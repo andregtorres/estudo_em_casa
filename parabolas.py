@@ -41,7 +41,7 @@ def arrowed_spines(fig, ax):
     # manual arrowhead width and length
     hw = 1./20.*(ymax-ymin)
     hl = 1./20.*(xmax-xmin)
-    lw = 1. # axis line width
+    lw = 3. # axis line width
     ohg = 0.3 # arrow overhang
 
     # compute matching arrowhead length and width
@@ -103,23 +103,28 @@ if __name__=="__main__":
         plt.figure(dpi=200)
         plt.xlim(lims[0])
         plt.ylim(lims[1])
-        plt.plot(x,y)
-        if i>0:
-            plt.plot(x2,y2)
-        if arrow:
-            plt.arrow(x0, y0, ox2, oy2, color="k", head_width=0.3,length_includes_head=True)
-            plt.plot([0,ox2], [oy2]*2,":k")
-            plt.plot([ox2]*2, [0,oy2],":k")
+
         fig = plt.gcf()
         ax = plt.gca()
         if not ticks:
             ax.axes.get_xaxis().set_ticks(xpoints)
             ax.axes.get_yaxis().set_ticks(ypoints)
         arrowed_spines(fig, ax)
-        plt.xlabel(r'$\mathit{x}$',size=20)
-        plt.ylabel(r"$y$",rotation=0,size=20)
+        if arrow:
+            plt.plot([0,ox2], [oy2]*2,":k")
+            plt.plot([ox2]*2, [0,oy2],":k")
+        plt.xlabel(r'$\mathit{x}$',size=30)
+        plt.ylabel(r"$y$",rotation=0,size=30)
         ax.xaxis.set_label_coords(1,0)
         ax.yaxis.set_label_coords(0.5,1)
+
+        plt.plot(x,y, linewidth=4, color="#134872")
+        if i>0:
+            plt.plot(x2,y2, linewidth=4, color="#e04146")
+            if arrow:
+                plt.arrow(x0, y0, ox2, oy2, color="r", linewidth=3, head_width=0.5,length_includes_head=True)
+
+
         plt.savefig(name+"/frame_{0:04d}.png".format(i))
         if i==0:
             plt.savefig(name+"/primeiroFrame.png")
