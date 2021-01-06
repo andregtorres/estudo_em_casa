@@ -1,5 +1,5 @@
 #André Torres
-# 21.12.2020
+# 06.01.2021
 
 import numpy as np
 import matplotlib
@@ -7,58 +7,15 @@ import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.axisartist.axislines import SubplotZero
 import sys
+from parabolas import arrowed_spines
 
 plt.rcParams["mathtext.fontset"]="stix"
 matplotlib.rc('xtick', labelsize=20)
 matplotlib.rc('ytick', labelsize=20)
 
-def arrowed_spines(fig, ax):
-    #global fig, ax
-    #https://stackoverflow.com/questions/33737736/matplotlib-axis-arrow-tip
-
-    xmin, xmax = ax.get_xlim()
-    ymin, ymax = ax.get_ylim()
-
-    # removing the default axis on all sides:
-    for side in ['bottom','right','top','left']:
-        ax.spines[side].set_visible(False)
-
-    ax.spines['bottom'].set_position('zero')
-    ax.spines['left'].set_position('zero')
-
-    # removing the axis ticks
-    #plt.xticks([]) # labels
-    #plt.yticks([])
-    #ax.xaxis.set_ticks_position('none') # tick markers
-    #ax.yaxis.set_ticks_position('none')
-
-    # get width and height of axes object to compute
-    # matching arrowhead length and width
-    dps = fig.dpi_scale_trans.inverted()
-    bbox = ax.get_window_extent().transformed(dps)
-    width, height = bbox.width, bbox.height
-
-    # manual arrowhead width and length
-    hw = 1./20.*(ymax-ymin)
-    hl = 1./20.*(xmax-xmin)
-    lw = 3. # axis line width
-    ohg = 0.3 # arrow overhang
-
-    # compute matching arrowhead length and width
-    yhw = hw/(ymax-ymin)*(xmax-xmin)* height/width
-    yhl = hl/(xmax-xmin)*(ymax-ymin)* width/height
-
-    # draw x and y axis
-    ax.arrow(xmin, 0, xmax-xmin, 0., fc='k', ec='k', lw = lw,
-             head_width=hw, head_length=hl, overhang = ohg,
-             length_includes_head= True, clip_on = False)
-
-    ax.arrow(0, ymin, 0., ymax-ymin, fc='k', ec='k', lw = lw,
-             head_width=yhw, head_length=yhl, overhang = ohg,
-             length_includes_head= True, clip_on = False)
-
 def getLims(x,y,ox2,oy2, margin):
-    y2=(x-x0)**2+y0+oy2
+    #y2=(x-x0)**2+y0+oy2
+    y2=np.sin(2*np.pi*x)+y0+oy2
     return [(min(np.min(x),np.min(x+ox2))-margin,max(np.max(x),np.max(x+ox2))+margin),(min(np.min(y),np.min(y2))-margin,   max(np.max(y),np.max(y2))+margin)]
 
 name="test"
@@ -88,18 +45,20 @@ if __name__=="__main__":
     Npoints=200
 
     xmax=4
-    margin=0.5
+    margin=1
+    T=4
 
     xpoints=[ox2]
     ypoints=[oy2]
 
     x=np.linspace(-xmax,xmax,Npoints)
-    y=a0*(x-x0)**2+y0
+    y=a0*np.sin(2*np.pi*x/T)+y0
     lims=getLims(x,y,ox2,oy2,margin)
 
     for i in range(Nframes):
         x2=x+ox2/Nframes*(i)
-        y2=(a0+(a2-a0)/Nframes*(i))*(x-x0)**2+y0+oy2/Nframes*(i)
+        #y2=(a0+(a2-a0)/Nframes*(i))*(x-x0)**2+y0+oy2/Nframes*(i)
+        y2=(a0+(a2-a0)/Nframes*(i))*np.sin(2*np.pi*(x-x0)/T)+y0+oy2/Nframes*(i)
         plt.figure(dpi=200)
         plt.xlim(lims[0])
         plt.ylim(lims[1])
@@ -124,7 +83,7 @@ if __name__=="__main__":
         if i>0:
             plt.plot(x2,y2, linewidth=4, color="#e04146")
             if arrow:
-                plt.arrow(x0, y0, ox2, oy2, color="r", linewidth=3, head_width=0.5,length_includes_head=True)
+                plt.arrow(x0, y0, ox2, oy2, color="r", linewidth=3, head_width=0.2,length_includes_head=True)
 
 
         plt.savefig(name+"/frame_{0:04d}.png".format(i))
