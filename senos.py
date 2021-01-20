@@ -36,11 +36,13 @@ if __name__=="__main__":
         ox2=float(sys.argv[3])
         oy2=float(sys.argv[4])
     if len(sys.argv)>4:
-        for i in sys.argv[5:]:
+        for j,i in enumerate(sys.argv[5:]):
             if i== "-t":
                 ticks=True
             if i== "-a":
                 arrow=True
+            if i== "-l":
+                label=sys.argv[5+j+1]
 
     print("A criar video em {}".format(name))
     Nframes=100
@@ -65,6 +67,7 @@ if __name__=="__main__":
     print("arrow: ", arrow)
     print("ticks: ", ticks)
     print("points: ", points)
+    print("label: ", label)
     for i in range(Nframes):
         x2=x+ox2/Nframes*(i)
         #y2=(a0+(a2-a0)/Nframes*(i))*(x-x0)**2+y0+oy2/Nframes*(i)
@@ -94,13 +97,13 @@ if __name__=="__main__":
             plt.plot(x[0],y[0], "o", markersize=8, color="#134872")
             plt.plot(x[-1],y[-1], "o", markersize=8, color="#134872")
         if func:
-            plt.text(np.max(np.array(lims)[0])-margin, np.max(np.array(lims)[1])-margin+0.2+0.1*(lims[1][1]-margin), u"$f(x)$", size=22, color="#134872")
+            plt.text(2, np.max(np.array(lims)[1])-margin+0.3+0.15*(lims[1][1]-margin), u"$f(x)$", size=22, color="#134872")
         if i>0:
             plt.plot(x2,y2, linewidth=4, color="#e04146")
             plt.plot(x2[0],y2[0], "o", markersize=8, color="#e04146")
             plt.plot(x2[-1],y2[-1], "o", markersize=8, color="#e04146")
             if func:
-                plt.text(np.max(np.array(lims)[0])-margin, np.max(np.array(lims)[1])-margin, u"$g(x)$", size=22, color="#e04146")
+                plt.text(2, np.max(np.array(lims)[1])-margin+0.1, u"$g(x)={}$".format(label), size=22, color="#e04146")
             if arrow:
                 plt.arrow(x0, y0, ox2, oy2, color="r", linewidth=3, head_width=0.2,length_includes_head=True)
 
