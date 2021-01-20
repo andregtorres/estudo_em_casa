@@ -27,6 +27,8 @@ ox2=1
 oy2=2
 ticks=False
 arrow=False
+points=True
+func=True
 if __name__=="__main__":
     if len(sys.argv)>1:
         name=sys.argv[1]
@@ -48,13 +50,21 @@ if __name__=="__main__":
     margin=1
     T=4
 
-    xpoints=[ox2]
-    ypoints=[oy2]
-
     x=np.linspace(-xmax,xmax,Npoints)
     y=a0*np.sin(2*np.pi*x/T)+y0
     lims=getLims(x,y,ox2,oy2,margin)
 
+    if ticks:
+        xpoints=np.arange(lims[0][0],lims[0][1])
+        ypoints=np.arange(lims[1][0],lims[1][1])
+    else:
+        xpoints=[ox2]
+        ypoints=[oy2]
+
+
+    print("arrow: ", arrow)
+    print("ticks: ", ticks)
+    print("points: ", points)
     for i in range(Nframes):
         x2=x+ox2/Nframes*(i)
         #y2=(a0+(a2-a0)/Nframes*(i))*(x-x0)**2+y0+oy2/Nframes*(i)
@@ -65,9 +75,9 @@ if __name__=="__main__":
 
         fig = plt.gcf()
         ax = plt.gca()
-        if not ticks:
-            ax.axes.get_xaxis().set_ticks(xpoints)
-            ax.axes.get_yaxis().set_ticks(ypoints)
+        ax.axes.get_xaxis().set_ticks(xpoints)
+        ax.axes.get_yaxis().set_ticks(ypoints)
+
         arrowed_spines(fig, ax)
         if arrow:
             plt.plot([0,ox2], [oy2]*2,":k")
@@ -80,12 +90,21 @@ if __name__=="__main__":
         ax.yaxis.set_label_coords(coordx,1)
 
         plt.plot(x,y, linewidth=4, color="#134872")
+        if points:
+            plt.plot(x[0],y[0], "o", markersize=8, color="#134872")
+            plt.plot(x[-1],y[-1], "o", markersize=8, color="#134872")
+        if func:
+            plt.text(np.max(np.array(lims)[0])-margin, np.max(np.array(lims)[1])-margin+0.2+0.1*(lims[1][1]-margin), u"$f(x)$", size=22, color="#134872")
         if i>0:
             plt.plot(x2,y2, linewidth=4, color="#e04146")
+            plt.plot(x2[0],y2[0], "o", markersize=8, color="#e04146")
+            plt.plot(x2[-1],y2[-1], "o", markersize=8, color="#e04146")
+            if func:
+                plt.text(np.max(np.array(lims)[0])-margin, np.max(np.array(lims)[1])-margin, u"$g(x)$", size=22, color="#e04146")
             if arrow:
                 plt.arrow(x0, y0, ox2, oy2, color="r", linewidth=3, head_width=0.2,length_includes_head=True)
 
-
+        #plt.grid()
         plt.savefig(name+"/frame_{0:04d}.png".format(i))
         if i==0:
             plt.savefig(name+"/primeiroFrame.png")
