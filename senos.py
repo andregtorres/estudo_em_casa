@@ -25,10 +25,12 @@ y0=0
 a2=1
 ox2=1
 oy2=2
+bg=False
 ticks=False
 arrow=False
 points=True
 func=True
+label=None
 if __name__=="__main__":
     if len(sys.argv)>1:
         name=sys.argv[1]
@@ -41,6 +43,8 @@ if __name__=="__main__":
                 ticks=True
             if i== "-a":
                 arrow=True
+            if i== "-b":
+                bg=True
             if i== "-l":
                 label=sys.argv[5+j+1]
 
@@ -80,10 +84,11 @@ if __name__=="__main__":
         #fig = plt.gcf()
         ax = plt.gca()
         #background
-        fig.patch.set_facecolor(bgcolor)
-        ax.set_facecolor(bgcolor)
-        #fig.patch.set_alpha(0)
-        #ax.patch.set_alpha(0)
+        if bg:
+            fig.patch.set_facecolor(bgcolor)
+            ax.set_facecolor(bgcolor)
+            #fig.patch.set_alpha(0)
+            #ax.patch.set_alpha(0)
         ax.axes.get_xaxis().set_ticks(xpoints)
         ax.axes.get_yaxis().set_ticks(ypoints)
 
@@ -103,13 +108,13 @@ if __name__=="__main__":
             plt.plot(x[0],y[0], "o", markersize=8, color="#134872")
             plt.plot(x[-1],y[-1], "o", markersize=8, color="#134872")
         if func:
-            plt.text(2, np.max(np.array(lims)[1])-margin+0.3+0.15*(lims[1][1]-margin), u"$f(x)$", size=22, color="#134872")
+            plt.text(2, np.max(np.array(lims)[1])-margin+0.3+0.15*(lims[1][1]-margin), u"$f$", size=22, color="#134872")
         if i>0:
             plt.plot(x2,y2, linewidth=4, color="#e04146")
             plt.plot(x2[0],y2[0], "o", markersize=8, color="#e04146")
             plt.plot(x2[-1],y2[-1], "o", markersize=8, color="#e04146")
             if func:
-                plt.text(2, np.max(np.array(lims)[1])-margin+0.1, u"$g(x)={}$".format(label), size=22, color="#e04146")
+                plt.text(2, np.max(np.array(lims)[1])-margin+0.1, u"$g$", size=22, color="#e04146")
             if arrow:
                 plt.arrow(x0, y0, ox2, oy2, color="r", linewidth=3, head_width=0.2,length_includes_head=True)
 
