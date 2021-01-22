@@ -72,12 +72,18 @@ if __name__=="__main__":
         x2=x+ox2/Nframes*(i)
         #y2=(a0+(a2-a0)/Nframes*(i))*(x-x0)**2+y0+oy2/Nframes*(i)
         y2=(a0+(a2-a0)/Nframes*(i))*np.sin(2*np.pi*(x-x0)/T)+y0+oy2/Nframes*(i)
-        plt.figure(dpi=200)
+        fig=plt.figure(dpi=200)
         plt.xlim(lims[0])
         plt.ylim(lims[1])
 
-        fig = plt.gcf()
+        bgcolor="#f4f4f4"
+        #fig = plt.gcf()
         ax = plt.gca()
+        #background
+        fig.patch.set_facecolor(bgcolor)
+        ax.set_facecolor(bgcolor)
+        #fig.patch.set_alpha(0)
+        #ax.patch.set_alpha(0)
         ax.axes.get_xaxis().set_ticks(xpoints)
         ax.axes.get_yaxis().set_ticks(ypoints)
 
@@ -108,11 +114,11 @@ if __name__=="__main__":
                 plt.arrow(x0, y0, ox2, oy2, color="r", linewidth=3, head_width=0.2,length_includes_head=True)
 
         #plt.grid()
-        plt.savefig(name+"/frame_{0:04d}.png".format(i))
+        plt.savefig(name+"/frame_{0:04d}.png".format(i), facecolor=fig.get_facecolor())
         if i==0:
-            plt.savefig(name+"/primeiroFrame.png")
+            plt.savefig(name+"/primeiroFrame.png", facecolor=fig.get_facecolor())
         if i==Nframes-1:
-            plt.savefig(name+"/ultimoFrame.png")
+            plt.savefig(name+"/ultimoFrame.png", facecolor=fig.get_facecolor())
         plt.close()
         if i+1%int(Nframes/10)==0:
             print('.', end='', flush=True)
