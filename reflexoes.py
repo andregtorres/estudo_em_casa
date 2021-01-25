@@ -43,6 +43,7 @@ refy=True
 labels=True
 funcs=["1", "2", "3"]
 exp=1
+markers=[]
 if __name__=="__main__":
     if len(sys.argv)>1:
         name=sys.argv[1]
@@ -63,11 +64,17 @@ if __name__=="__main__":
                 refy=True
             if i== "-e":
                 func=sys.argv[5+j+1]
-                print(func)
                 if func not in funcs:
                     print(func," not a valid function, use ", funcs)
                 else:
                     exp=int(func)
+            if i[:2]== "-p":
+                print(sys.argv[5+j:])
+                markers_raw=sys.argv[5+j][2:].split(" ")
+                print(markers_raw)
+                for i in range(int(len(markers_raw)/2)):
+                    markers.append((float(markers_raw[2*i]),float(markers_raw[2*i+1])))
+                print(markers)
 
     print("A criar video em {}".format(name))
     Nframes=100
@@ -135,6 +142,13 @@ if __name__=="__main__":
         ax.xaxis.set_label_coords(1,coordy)
         ax.yaxis.set_label_coords(coordx,1)
         legLabels=[ u"$f$"]
+        if markers != []:
+            for m in markers:
+                plt.plot([0,m[0]], [m[1],m[1]],":k")
+                plt.plot([m[0],m[0]], [0,m[1]],":k")
+                plt.plot(m[0],m[1], "o", markersize=8, color=color1)
+            ax.axes.get_xaxis().set_ticks(np.array(markers).T[0].tolist())
+            ax.axes.get_yaxis().set_ticks(np.array(markers).T[1].tolist())
         plt.plot(x,y, linewidth=4, color=color1)
         if points:
             plt.plot(x[0],y[0], "o", markersize=8, color=color1)
