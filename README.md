@@ -20,7 +20,7 @@ em
 ```
 ./doParabolas.sh parabola1 1 1 2 -a
 ```
-![parabola1](parabola1/parabola1.gif)
+![parabola1](Arquivo/parabola/parabola1/parabola1.gif)
 para gerar gif:
  ```
  ffmpeg -i parabola1.mp4 -vf palettegen palette.png

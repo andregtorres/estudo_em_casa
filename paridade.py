@@ -166,7 +166,7 @@ if __name__=="__main__":
             except:
                 pass
         #plt.grid()
-        if i<Nframes:
+        if i<Nframes+1:
             plt.savefig(name+"/frame_{0:04d}.png".format(i), facecolor=fig.get_facecolor())
         if i==0:
             plt.savefig(name+"/primeiroFrame.png", facecolor=fig.get_facecolor())
