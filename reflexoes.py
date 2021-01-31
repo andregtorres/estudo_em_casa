@@ -72,8 +72,8 @@ if __name__=="__main__":
                 print(sys.argv[5+j:])
                 markers_raw=sys.argv[5+j][2:].split(" ")
                 print(markers_raw)
-                for i in range(int(len(markers_raw)/2)):
-                    markers.append((float(markers_raw[2*i]),float(markers_raw[2*i+1])))
+                for m in range(int(len(markers_raw)/2)):
+                    markers.append((float(markers_raw[2*m]),float(markers_raw[2*m+1])))
                 print(markers)
 
     print("A criar video em {}".format(name))
