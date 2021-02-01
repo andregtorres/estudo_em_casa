@@ -39,11 +39,13 @@ def getLims(x,y, x0, lines,exp, margin):
     '''
 
 def composeLabel(l, a, x0, y0, exp):
-    lab=u"${}(x)=".format(l)
+    lab=u"${}=".format(l)
     if np.abs(a) < 1:
         lab= lab +u"{0:.1f}".format(a)
     elif a ==1:
         lab= lab
+    elif a == -1:
+        lab=lab+u"-"
     else:
         lab= lab +u"{}".format(int(a))
     if x0==0:
@@ -63,20 +65,25 @@ name="test"
 bgcolor="#f4f4f4"
 color1="#134872"
 color2="#e04146"
-colors=[color1,color2,"g","cyan"]
+colors=[color1,color2,"g","#1fe0e0","#8932a8", "#ffd014"]
 
 a0=1
 x0=0
 y0=0
 x2=[]
 y2=[]
+xmax=2
 bg=True
 ticks=False
 points=True
 labels=True
 arrow=False
+aspectRatio=False
 label=None
-letters=["f","g","h"]
+ballsMarkerSize=5
+linesThickenss=3
+#letters=["f(x)","g(x)","h(x)"]
+letters=["y"]*6
 funcs=["1", "2", "3"]
 exp=1
 markers=[]
@@ -91,10 +98,14 @@ if __name__=="__main__":
         for j,i in enumerate(sys.argv[5:]):
             if i== "-t":
                 ticks=True
+            if i== "-r":
+                aspectRatio=True
             if i== "-b":
                 bg=False
             if i== "-a":
                 arrow=True
+            if i== "-l":
+                labels=False
             if i== "-e":
                 func=sys.argv[5+j+1]
                 if func not in funcs:
@@ -108,13 +119,17 @@ if __name__=="__main__":
             if i[:2]== "-f":
                 newLine_raw=sys.argv[5+j][2:].split(" ")
                 lines.append([float(param) for param in newLine_raw])
+            if i[:2]== "-d":
+                xmax=int(sys.argv[5+j][2:])
 
     print("A criar video em {}".format(name))
     Nframes=100
     Npoints=200
 
-    xmax=4
-    margin=(1,2**exp)
+    if aspectRatio:
+        margin=(1,1)
+    else:
+        margin=(1,2**exp)
 
     x=np.linspace(-xmax+x0,xmax+x0,Npoints)
     y=a0*(x-x0)**exp + y0
@@ -136,6 +151,7 @@ if __name__=="__main__":
     print("arrow: ", arrow)
     print("points: ", markers)
     print("lines: ", lines)
+    print("legend: ", labels)
     xCoordsToShow=[]
     yCoordsToShow=[]
     xLabelsToShow=[]
@@ -149,12 +165,17 @@ if __name__=="__main__":
             y2.append((a0+(line[0]-a0)/Nframes*(i))*(x)**exp + y0+(line[2]-y0)/Nframes*(i))
 
         #plot and limits
-        fig=plt.figure(dpi=200)
+        fig=plt.figure(dpi=150)
         plt.xlim(lims[0])
         plt.ylim(lims[1])
 
         #fig = plt.gcf()
         ax = plt.gca()
+
+        if aspectRatio:
+            #plt.axis('equal')
+            #plt.axis('scaled')
+            ax.set_aspect('equal', adjustable='box')
         #background
         if bg:
             fig.patch.set_facecolor(bgcolor)
@@ -179,21 +200,38 @@ if __name__=="__main__":
         if arrow:
             if i>0:
                 for nLine,line in enumerate(lines):
-                    plt.plot([0,line[1]], [line[2]]*2,":k")
-                    plt.plot([line[1]]*2, [0,line[2]],":k")
-                    plt.arrow(x0, y0, line[1], line[2], color=colors[1+nLine], linewidth=3, head_width=0.5,length_includes_head=True)
+                    if line[2] !=0:
+                        plt.plot([0,line[1]], [line[2]]*2,":k")
+                    if line[1] !=0:
+                        plt.plot([line[1]]*2, [0,line[2]],":k")
+                    plt.arrow(x0, y0, line[1], line[2], color=colors[1+nLine], linewidth=linesThickenss-1, head_width=0.25,length_includes_head=True)
 
 
         #labels
         legLabels=[ composeLabel(letters[0],a0,x0,y0,exp)]
 
+        #plot first line
+        plt.plot(x,y, linewidth=linesThickenss, color=color1)
+        if points:
+            plt.plot(x[0],y[0], "o", markersize=ballsMarkerSize, color=color1)
+            plt.plot(x[-1],y[-1], "o", markersize=ballsMarkerSize, color=color1)
+        #plot other lines
+        if i>0:
+            for j in range(len(x2)):
+                plt.plot(x2[j],y2[j], linewidth=linesThickenss, color=colors[j+1])
+                if points:
+                    plt.plot(x2[j][0],y2[j][0], "o", markersize=ballsMarkerSize, color=colors[j+1])
+                    plt.plot(x2[j][-1],y2[j][-1], "o", markersize=ballsMarkerSize, color=colors[j+1])
+
         #points on function
         if markers != []:
             for m in markers:
                 if i==Nframes:
-                    plt.plot([0,m[0]], [m[1],m[1]],":k")
-                    plt.plot([m[0],m[0]], [0,m[1]],":k")
-                    plt.plot(m[0],m[1], "o", markersize=8, color=colors[m[2]])
+                    if m[1] !=0:
+                        plt.plot([0,m[0]], [m[1],m[1]],":k")
+                    if m[0] !=0:
+                        plt.plot([m[0],m[0]], [0,m[1]],":k")
+                    plt.plot(m[0],m[1], "o", markersize=ballsMarkerSize, color=colors[m[2]])
                     if m[0] not in xCoordsToShow or m[1] not in yCoordsToShow:
                         xCoordsToShow.append(m[0])
                         yCoordsToShow.append(m[1])
@@ -215,25 +253,16 @@ if __name__=="__main__":
             ax.axes.get_xaxis().set_ticklabels(xLabelsToShow)
             ax.axes.get_yaxis().set_ticks(yCoordsToShow)
             ax.axes.get_yaxis().set_ticklabels(yLabelsToShow)
+            ax.axes.get_xaxis().set_zorder(10)
+            ax.axes.get_yaxis().set_zorder(10)
 
-        #plot first line
-        plt.plot(x,y, linewidth=4, color=color1)
-        if points:
-            plt.plot(x[0],y[0], "o", markersize=8, color=color1)
-            plt.plot(x[-1],y[-1], "o", markersize=8, color=color1)
-        #plot other lines
-        if i>0:
-            for j in range(len(x2)):
-                plt.plot(x2[j],y2[j], linewidth=4, color=colors[j+1])
-                if points:
-                    plt.plot(x2[j][0],y2[j][0], "o", markersize=8, color=colors[j+1])
-                    plt.plot(x2[j][-1],y2[j][-1], "o", markersize=8, color=colors[j+1])
+
         #legend
         if i>0:
             for nLine,line in enumerate(lines):
                 legLabels.append( composeLabel(letters[nLine+1], *line, exp))
         if labels:
-            l=ax.legend(legLabels, fontsize=22, markerscale=0, frameon=False, facecolor=bgcolor, handlelength=0, handletextpad=0,labelspacing=0.1, loc='center right', bbox_to_anchor=(1.0,1.2))
+            l=ax.legend(legLabels, fontsize=18, markerscale=0, frameon=False, facecolor=bgcolor, handlelength=0, handletextpad=0,labelspacing=0.03, loc='center right', bbox_to_anchor=(1,1))
             l.get_texts()[0].set_color(color1)
             l.legendHandles[0].set_visible=False
             try:
