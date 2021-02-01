@@ -231,7 +231,7 @@ if __name__=="__main__":
                         plt.plot([0,m[0]], [m[1],m[1]],":k")
                     if m[0] !=0:
                         plt.plot([m[0],m[0]], [0,m[1]],":k")
-                    plt.plot(m[0],m[1], "o", markersize=ballsMarkerSize, color=colors[m[2]])
+                    plt.plot(m[0],m[1], "o", markersize=ballsMarkerSize+1, color=colors[m[2]], zorder=12)
                     if m[0] not in xCoordsToShow or m[1] not in yCoordsToShow:
                         xCoordsToShow.append(m[0])
                         yCoordsToShow.append(m[1])
@@ -250,9 +250,9 @@ if __name__=="__main__":
                         else:
                             yLabelsToShow.append(laby)
             ax.axes.get_xaxis().set_ticks(xCoordsToShow)
-            ax.axes.get_xaxis().set_ticklabels(xLabelsToShow)
+            ax.axes.get_xaxis().set_ticklabels(xLabelsToShow, zorder=10)
             ax.axes.get_yaxis().set_ticks(yCoordsToShow)
-            ax.axes.get_yaxis().set_ticklabels(yLabelsToShow)
+            ax.axes.get_yaxis().set_ticklabels(yLabelsToShow, zorder=10)
             ax.axes.get_xaxis().set_zorder(10)
             ax.axes.get_yaxis().set_zorder(10)
 
