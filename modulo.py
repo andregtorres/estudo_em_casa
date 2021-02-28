@@ -136,7 +136,7 @@ if __name__=="__main__":
                 xmax=int(sys.argv[5+j][2:])
 
     print("A criar video em {}".format(name))
-    Nframes=100
+    Nframes=101
     Npoints=200
 
     if aspectRatio:
@@ -250,7 +250,7 @@ if __name__=="__main__":
                         plt.plot([0,m[0]], [m[1],m[1]],":k")
                     if m[0] !=0:
                         plt.plot([m[0],m[0]], [0,m[1]],":k")
-                    plt.plot(m[0],m[1], "o", markersize=ballsMarkerSize+1, color=colors[m[2]], zorder=12)
+                    plt.plot(m[0],m[1], "o", markersize=ballsMarkerSize-1, color=colors[m[2]], zorder=12)
                     if m[0] not in xCoordsToShow or m[1] not in yCoordsToShow:
                         xCoordsToShow.append(m[0])
                         yCoordsToShow.append(m[1])
