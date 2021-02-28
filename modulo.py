@@ -8,14 +8,14 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axisartist.axislines import SubplotZero
 import sys
 from parabolas import arrowed_spines
-
+from polinomial import composeLabel
 plt.rcParams["mathtext.fontset"]="stix"
 matplotlib.rc('xtick', labelsize=16)
 matplotlib.rc('ytick', labelsize=16)
 
 #y2.append((a0+(line[0]-a0)/Nframes*(i))*(x2[-1]+(x2[-1]-line[1])/Nframes*(i))**exp + y0+(y0-line[2])/Nframes*(i))
 
-def getLims(x,y, x0, lines,exp, margin):
+def getLims(x,y, lines,exp, margin):
     xmins=[np.min(x)]
     xmaxs=[np.max(x)]
     ymins=[np.min(y)]
@@ -24,7 +24,7 @@ def getLims(x,y, x0, lines,exp, margin):
         xmins.append(np.min(x+l[1]))
         xmaxs.append(np.max(x+l[1]))
         x2=x+l[1]
-        y2=l[0]*(x)**exp+l[2]
+        y2=l[0]*np.abs((x)**exp)+l[2]
         ymins.append(np.min(y2))
         ymaxs.append(np.max(y2))
     return [(min(xmins)-margin[0],
@@ -38,7 +38,7 @@ def getLims(x,y, x0, lines,exp, margin):
             max(np.max(y),np.max(y))+margin)]
     '''
 
-def composeLabel(l, a, x0, y0, exp):
+def composeLabelAbs(l, a, x0, y0, exp):
     lab=u"${}=".format(l)
     if np.abs(a) < 1:
         lab= lab +u"{0:.1f}".format(a)
@@ -50,19 +50,19 @@ def composeLabel(l, a, x0, y0, exp):
         lab= lab +u"{}".format(int(a))
     if x0==0:
         if exp != 1:
-            lab= lab +u"x^{}".format(exp)
+            lab= lab +u"|x^{}|".format(exp)
         else:
-            lab= lab +u"x"
+            lab= lab +u"|x|"
     elif x0>0:
         if exp != 1:
-            lab= lab +u"(x-{})^{}".format(int(x0),exp)
+            lab= lab +u"|(x-{})^{}|".format(int(x0),exp)
         else:
-            lab= lab +u"x-{}".format(int(x0))
+            lab= lab +u"|x-{}|".format(int(x0))
     elif x0<0:
         if exp != 1:
-            lab= lab +u"(x+{})^{}".format(int(-x0),exp)
+            lab= lab +u"|(x+{})^{}|".format(int(-x0),exp)
         else:
-            lab= lab +u"x+{}".format(int(x0))
+            lab= lab +u"|x+{}|".format(int(-x0))
     if y0<0:
         lab= lab +u"-{}".format(int(-y0))
     if y0>0:
@@ -143,7 +143,7 @@ if __name__=="__main__":
 
     x=np.linspace(-xmax+x0,xmax+x0,Npoints)
     y=a0*(x-x0)**exp + y0
-    lims=getLims(x,y,x0,lines,exp,margin)
+    lims=getLims(x,y,lines,exp,margin)
     if ticks:
         xpoints=np.arange(lims[0][0],lims[0][1])
         ypoints=np.arange(lims[1][0],lims[1][1])
@@ -166,14 +166,15 @@ if __name__=="__main__":
     yCoordsToShow=[]
     xLabelsToShow=[]
     yLabelsToShow=[]
-    #animation loop
+    #animation loop 1
     for i in range(Nframes+1):
         x2=[]
         y2=[]
         for line in lines:
             x2.append(np.array(x+(line[1]-x0)/Nframes*(i)))
-            y2.append((a0+(line[0]-a0)/Nframes*(i))*(x)**exp + y0+(line[2]-y0)/Nframes*(i))
-
+            #y2.append((a0+(line[0]-a0)/Nframes*(i))*np.abs((x)**exp) + y0+(line[2]-y0)/Nframes*(i))
+            yfinal=(line[0]*np.abs((x-x0)**exp) +line[2]) #only works for x0==0
+            y2.append(y+(yfinal-y)/Nframes*(i))
         #plot and limits
         fig=plt.figure(dpi=150)
         plt.xlim(lims[0])
@@ -214,8 +215,7 @@ if __name__=="__main__":
                         plt.plot([0,line[1]], [line[2]]*2,":k")
                     if line[1] !=0:
                         plt.plot([line[1]]*2, [0,line[2]],":k")
-                    plt.arrow(x0, y0, line[1], line[2], color=colors[1+nLine], linewidth=linesThickenss-1, head_width=0.25,length_includes_head=True)
-
+                    plt.arrow(x0, y0, line[1]-x0, line[2]-y0, color=colors[1+nLine], linewidth=linesThickenss-1, head_width=0.25,length_includes_head=True)
 
         #labels
         legLabels=[ composeLabel(letters[0],a0,x0,y0,exp)]
@@ -270,7 +270,7 @@ if __name__=="__main__":
         #legend
         if i>0:
             for nLine,line in enumerate(lines):
-                legLabels.append( composeLabel(letters[nLine+1], *line, exp))
+                legLabels.append( composeLabelAbs(letters[nLine+1], *line, exp))
         if labels:
             l=ax.legend(legLabels, fontsize=18, markerscale=0, frameon=False, facecolor=bgcolor, handlelength=0, handletextpad=0,labelspacing=0.03, loc='center right', bbox_to_anchor=(1,1))
             l.get_texts()[0].set_color(color1)
@@ -293,4 +293,5 @@ if __name__=="__main__":
         plt.close()
         if (i+1)%int(Nframes/10)==0:
             print('.', end='', flush=True)
+
     print("\nDONE")
