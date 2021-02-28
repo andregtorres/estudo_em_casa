@@ -89,6 +89,7 @@ points=False
 labels=True
 arrow=False
 aspectRatio=False
+absRef=False
 label=None
 ballsMarkerSize=5
 linesThickenss=3
@@ -116,6 +117,8 @@ if __name__=="__main__":
                 arrow=True
             if i== "-l":
                 labels=False
+            if i== "-absRef":
+                absRef=True
             if i== "-e":
                 func=sys.argv[5+j+1]
                 if func not in funcs:
@@ -143,6 +146,8 @@ if __name__=="__main__":
 
     x=np.linspace(-xmax+x0,xmax+x0,Npoints)
     y=a0*(x-x0)**exp + y0
+    if absRef:
+        y=a0*np.abs((x-x0)**exp) + y0
     lims=getLims(x,y,lines,exp,margin)
     if ticks:
         xpoints=np.arange(lims[0][0],lims[0][1])
@@ -162,6 +167,7 @@ if __name__=="__main__":
     print("points: ", markers)
     print("lines: ", lines)
     print("legend: ", labels)
+    print("absRef: ", absRef)
     xCoordsToShow=[]
     yCoordsToShow=[]
     xLabelsToShow=[]
@@ -215,10 +221,13 @@ if __name__=="__main__":
                         plt.plot([0,line[1]], [line[2]]*2,":k")
                     if line[1] !=0:
                         plt.plot([line[1]]*2, [0,line[2]],":k")
-                    plt.arrow(x0, y0, line[1]-x0, line[2]-y0, color=colors[1+nLine], linewidth=linesThickenss-1, head_width=0.25,length_includes_head=True)
+                    plt.arrow(x0, y0, line[1]-x0, line[2]-y0, color=colors[1+nLine], linewidth=linesThickenss-1, head_width=0.15,length_includes_head=True)
 
         #labels
-        legLabels=[ composeLabel(letters[0],a0,x0,y0,exp)]
+        if not absRef:
+            legLabels=[ composeLabel(letters[0],a0,x0,y0,exp)]
+        else:
+            legLabels=[ composeLabelAbs(letters[0],a0,x0,y0,exp)]
 
         #plot first line
         plt.plot(x,y, linewidth=linesThickenss, color=color1)
