@@ -117,6 +117,13 @@ if __name__=="__main__":
                 lines.append([float(param) for param in newLine_raw])
             if i[:2]== "-d":
                 xmax=int(sys.argv[5+j][2:])
+            if i[:2]== "-c":
+                corder=sys.argv[5+j][2:]
+                colors0=colors[:]
+                colors=[]
+                for c in corder:
+                    colors.append(colors0[int(c)])
+
 
     print("A criar video em {}".format(name))
     Nframes=100
@@ -205,10 +212,10 @@ if __name__=="__main__":
         legLabels=[ composeLabel(letters[0],a0,x0,y0,exp)]
 
         #plot first line
-        plt.plot(x,y, linewidth=linesThickenss, color=color1)
+        plt.plot(x,y, linewidth=linesThickenss, color=colors[0])
         if points:
-            plt.plot(x[0],y[0], "o", markersize=ballsMarkerSize, color=color1)
-            plt.plot(x[-1],y[-1], "o", markersize=ballsMarkerSize, color=color1)
+            plt.plot(x[0],y[0], "o", markersize=ballsMarkerSize, color=colors[0])
+            plt.plot(x[-1],y[-1], "o", markersize=ballsMarkerSize, color=colors[0])
         #plot other lines
         if i>0:
             for j in range(len(x2)):
@@ -257,7 +264,7 @@ if __name__=="__main__":
                 legLabels.append( composeLabel(letters[nLine+1], *line, exp))
         if labels:
             l=ax.legend(legLabels, fontsize=18, markerscale=0, frameon=False, facecolor=bgcolor, handlelength=0, handletextpad=0,labelspacing=0.03, loc='center right', bbox_to_anchor=(1,1))
-            l.get_texts()[0].set_color(color1)
+            l.get_texts()[0].set_color(colors[0])
             l.legendHandles[0].set_visible=False
             try:
                 for nLine,line in enumerate(lines):
