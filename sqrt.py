@@ -16,9 +16,9 @@ matplotlib.rc('ytick', labelsize=16)
 #y2.append((a0+(line[0]-a0)/Nframes*(i))*(x2[-1]+(x2[-1]-line[1])/Nframes*(i))**exp + y0+(y0-line[2])/Nframes*(i))
 
 def getLims(x,y, x0, lines,exp, margin):
-    xmins=[np.min(x)]
+    xmins=[0,np.min(x)]
     xmaxs=[np.max(x)]
-    ymins=[np.min(y)]
+    ymins=[0,np.min(y)]
     ymaxs=[np.max(y)]
     for l in lines:
         xmins.append(np.min(x+l[1]))
@@ -158,8 +158,7 @@ if __name__=="__main__":
         y2=[]
         for line in lines:
             x2.append(np.array(x+(line[1]-x0)/Nframes*(i)))
-            y2.append((a0+(line[0]-a0)/Nframes*(i))*(x)**exp + y0+(line[2]-y0)/Nframes*(i))
-
+            y2.append((a0+(line[0]-a0)/Nframes*(i))*(x-x0)**exp + y0+(line[2]-y0)/Nframes*(i))
         #plot and limits
         fig=plt.figure(dpi=150)
         plt.xlim(lims[0])
@@ -191,7 +190,6 @@ if __name__=="__main__":
         coordx=-lims[0][0]/(lims[0][1]-lims[0][0])-0.05
         ax.xaxis.set_label_coords(1,coordy)
         ax.yaxis.set_label_coords(coordx,0.95)
-
         #arrow
         if arrow:
             if i>0:
@@ -200,7 +198,7 @@ if __name__=="__main__":
                         plt.plot([0,line[1]], [line[2]]*2,":k")
                     if line[1] !=0:
                         plt.plot([line[1]]*2, [0,line[2]],":k")
-                    plt.arrow(x0, y0, line[1], line[2], color=colors[1+nLine], linewidth=linesThickenss-1, head_width=0.25,length_includes_head=True)
+                    plt.arrow(x0, y0, line[1]-x0, line[2]-y0, color=colors[1+nLine], linewidth=linesThickenss-1, head_width=0.25,length_includes_head=True)
 
 
         #labels
