@@ -65,7 +65,7 @@ name="test"
 bgcolor="#f4f4f4"
 color1="#134872"
 color2="#e04146"
-colors=[color1,color2,"g","#1fe0e0","#8932a8", "#4a8fff","#ffd014"]
+colors=[color1,color2,"g","#1fe0e0","#8932a8", "#005eff","#ffd014"]
 #colors=[color1,color1,color1,color2,color2,color2]
 
 a0=1
